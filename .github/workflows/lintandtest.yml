@@ -1,0 +1,130 @@
+name: 🚀 Lint and test
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  lint:
+    name: ⬣ ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: ▦ Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ^8.6.6
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4
+        with:
+          node-version: 18
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: 📥 Install deps
+        run: pnpm install
+
+      - name: 🔬 Lint
+        run: pnpm run lint
+
+  typecheck:
+    name: ʦ TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: ▦ Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4
+        with:
+          node-version: 18
+          cache: pnpm
+
+      - name: 📥 Install deps
+        run: pnpm install
+
+      - name: 🔎 Type check
+        run: pnpm run typecheck
+
+  # TODO: Add tests
+  # vitest:
+  #   name: ⚡ Vitest
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ⬇️ Checkout repo
+  #       uses: actions/checkout@v3
+
+  #     - name: ▦ Setup pnpm
+  #       uses: pnpm/action-setup@v2
+  #       with:
+  #         version: ^8.6.6
+
+  #     - name: ⎔ Setup node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         cache: pnpm
+  #         node-version: 18
+
+  #     - name: 📥 Install deps
+  #       run: pnpm install
+
+  #     - name: ⚡ Run vitest
+  #       run: pnpm run test -- --coverage
+
+  # TODO: Setup Cypress (or Playwright)
+  # cypress:
+  #   name: ⚫️ Cypress
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: ⬇️ Checkout repo
+  #       uses: actions/checkout@v3
+
+  #     - name: 🏄 Copy test env vars
+  #       run: cp .env.example .env
+
+  #     - name: ▦ Setup pnpm
+  #       uses: pnpm/action-setup@v2
+  #       with:
+  #         version: ^8.6.6
+
+  #     - name: ⎔ Setup node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         cache: pnpm
+  #         node-version: 18
+
+  #     - name: 📥 Install deps
+  #       run: pnpm install
+
+  #     - name: 🛠 Setup Database
+  #       run: pnpm prisma migrate reset --force
+
+  #     - name: ⚙️ Build
+  #       run: pnpm run build
+
+  #     - name: 🌳 Cypress run
+  #       uses: cypress-io/github-action@v5
+  #       with:
+  #         start: pnpm run start:mocks
+  #         wait-on: http://localhost:8811
+  #       env:
+  #         PORT: 8811
