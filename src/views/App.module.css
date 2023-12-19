@@ -1,0 +1,16 @@
+.wrapper {
+  width: 100vw;
+  max-width: 1280px;
+  height: 100vh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 1rem 0;
+}
